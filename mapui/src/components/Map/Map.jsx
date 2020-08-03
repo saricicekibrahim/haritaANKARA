@@ -2,6 +2,7 @@ import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import { MAPBOX_TOKEN } from "../../Constants"
 import "./Map.css";
+import { layers, sources } from './Layers';
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
@@ -24,18 +25,29 @@ class Map extends React.Component {
         });
 
         map.on('load', function () {
-            map.addSource('mapbox://ibrahimsaricicek.9ngn7hoy', {
-                "url": "mapbox://ibrahimsaricicek.9ngn7hoy",
-                "type": "raster",
-                "tileSize": 256
+
+            sources.forEach(source => {
+                map.addSource(source, {
+                    "url": source,
+                    "type": "raster",
+                    "tileSize": 256
+                });
             });
-            map.addLayer({
-                "id": "ibrahimsaricicek-1924",
-                "type": "raster",
-                "source": "mapbox://ibrahimsaricicek.9ngn7hoy",
-                'minzoom': 0,
-                'maxzoom': 22
+
+            layers.forEach(layer => {
+                map.addLayer({
+                    "id": layer.id,
+                    "type": "raster",
+                    "source": layer.source,
+                    'minzoom': layer.minzoom,
+                    'maxzoom': layer.maxzoom
+                });
             });
+
+
+            //map.setLayoutProperty("ibrahimsaricicek-1924", 'visibility', 'none');
+            //map.setLayoutProperty("ibrahimsaricicek-42fn4k4w", 'visibility', 'none');
+
         });
 
         map.on('move', () => {
@@ -51,7 +63,7 @@ class Map extends React.Component {
         return (
             <div>
                 <div className='sidebarStyle'>
-                    <div>Longitude: {this.state.lng} | Latitude: {this.state.lat} | Zoom: {this.state.zoom}</div>
+                    <div>{this.state.lng} | {this.state.lat} | {this.state.zoom}</div>
                 </div>
                 <div ref={el => this.mapContainer = el} className='mapContainer' />
             </div>
