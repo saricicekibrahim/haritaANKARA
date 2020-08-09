@@ -2,7 +2,7 @@ import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import { MAPBOX_TOKEN } from "../../Constants"
 import "./Map.css";
-import { layers, sources } from './Layers';
+import { layers } from './Layers';
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 let map;
@@ -16,7 +16,6 @@ class Map extends React.Component {
             zoom: 13.99,
             map: null
         };
-        //this.handleVisibility = this.handleVisibility.bind(this);
     }
 
     componentDidMount() {
@@ -28,9 +27,9 @@ class Map extends React.Component {
         });
 
         map.on('load', function () {
-            sources.forEach(source => {
-                map.addSource(source, {
-                    "url": source,
+            layers.forEach(layer => {
+                map.addSource(layer.source, {
+                    "url": layer.source,
                     "type": "raster",
                     "tileSize": 256
                 });
@@ -73,18 +72,18 @@ class Map extends React.Component {
             <div>
                 <div className='sidebarStyle'>
                     <h3>Gatmangıller</h3>
+                    <h4>Harita</h4>
                     <div class="form-check">
-
                         {layers.map(layer => (
                             <div>
                                 <input class="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
                                 <label class="form-check-label" for="exampleRadios1">
-                                    {layer.id}
+                                    {layer.displayName}
                                 </label>
                             </div>
                         ))}
                     </div>
-
+                    <h4>Plan</h4>
                     <div className="fixed-bottom">{this.state.lng} | {this.state.lat} | {this.state.zoom}</div>
                 </div>
                 <div ref={el => this.mapContainer = el} className='mapContainer' />
