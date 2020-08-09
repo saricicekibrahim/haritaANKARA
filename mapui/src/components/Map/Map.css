@@ -9,6 +9,9 @@
     z-index: 1 !important;
     padding: 6px;
     font-weight: bold;
+    height: 100%;
+    width: 15%;
+    opacity: 0.8;
 }
 
 .mapContainer {

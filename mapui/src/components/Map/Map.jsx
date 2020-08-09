@@ -5,6 +5,7 @@ import "./Map.css";
 import { layers, sources } from './Layers';
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
+let map;
 
 class Map extends React.Component {
     constructor(props) {
@@ -12,12 +13,14 @@ class Map extends React.Component {
         this.state = {
             lng: 32.859,
             lat: 39.938,
-            zoom: 13.99
+            zoom: 13.99,
+            map: null
         };
+        //this.handleVisibility = this.handleVisibility.bind(this);
     }
 
     componentDidMount() {
-        const map = new mapboxgl.Map({
+        map = new mapboxgl.Map({
             container: this.mapContainer,
             style: 'mapbox://styles/mapbox/satellite-v9',
             center: [this.state.lng, this.state.lat],
@@ -25,7 +28,6 @@ class Map extends React.Component {
         });
 
         map.on('load', function () {
-
             sources.forEach(source => {
                 map.addSource(source, {
                     "url": source,
@@ -40,14 +42,13 @@ class Map extends React.Component {
                     "type": "raster",
                     "source": layer.source,
                     'minzoom': layer.minzoom,
-                    'maxzoom': layer.maxzoom
+                    'maxzoom': layer.maxzoom,
+                    'layout': {
+                        'visibility': 'none'
+                    }
                 });
-            });
-
-
-            //map.setLayoutProperty("ibrahimsaricicek-1924", 'visibility', 'none');
-            //map.setLayoutProperty("ibrahimsaricicek-42fn4k4w", 'visibility', 'none');
-
+            }
+            );
         });
 
         map.on('move', () => {
@@ -59,11 +60,32 @@ class Map extends React.Component {
         });
     }
 
+    handleLayer = (event) => {
+        let visible = "none";
+        if (event.target.checked) {
+            visible = "visible"
+        }
+        map.setLayoutProperty(event.target.id, "visibility", visible);
+    }
+
     render() {
         return (
             <div>
                 <div className='sidebarStyle'>
-                    <div>{this.state.lng} | {this.state.lat} | {this.state.zoom}</div>
+                    <h3>Gatmangıller</h3>
+                    <div class="form-check">
+
+                        {layers.map(layer => (
+                            <div>
+                                <input class="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
+                                <label class="form-check-label" for="exampleRadios1">
+                                    {layer.id}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="fixed-bottom">{this.state.lng} | {this.state.lat} | {this.state.zoom}</div>
                 </div>
                 <div ref={el => this.mapContainer = el} className='mapContainer' />
             </div>
