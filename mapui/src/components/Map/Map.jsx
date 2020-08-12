@@ -71,19 +71,37 @@ class Map extends React.Component {
         return (
             <div>
                 <div className='sidebarStyle'>
-                    <h3>Gatmangıller</h3>
+                    <h3>Katmangiller</h3>
+                    <br />
                     <h4>Harita</h4>
                     <div class="form-check">
                         {layers.map(layer => (
                             <div>
                                 <input class="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
-                                <label class="form-check-label" for="exampleRadios1">
+                                <label class="form-check-label" for={layer.id}>
                                     {layer.displayName}
                                 </label>
                             </div>
                         ))}
                     </div>
+
+                    <br />
                     <h4>Plan</h4>
+                    <div class="form-check">
+                        <div>
+                            <input class="form-check-input" type="checkbox" value="" />
+                            <label class="form-check-label" for="exampleRadios1">
+                                Jahnsen
+                            </label>
+                        </div>
+
+                        <div>
+                            <input class="form-check-input" type="checkbox" value="" />
+                            <label class="form-check-label" for="exampleRadios1">
+                                Lörcher
+                            </label>
+                        </div>
+                    </div>
                     <div className="fixed-bottom">{this.state.lng} | {this.state.lat} | {this.state.zoom}</div>
                 </div>
                 <div ref={el => this.mapContainer = el} className='mapContainer' />
