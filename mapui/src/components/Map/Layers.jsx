@@ -7,11 +7,25 @@ export const layers = [
         displayName: "1924"
     },
     {
+        "id": "ibrahimsaricicek-1934",
+        "source": "mapbox://ibrahimsaricicek.0weu0xrh",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "1934"
+    },
+    {
         "id": "ibrahimsaricicek-1940",
         "source": "mapbox://ibrahimsaricicek.42fn4k4w",
         'minzoom': 11.19,
         'maxzoom': 22,
         displayName: "1940"
+    },
+    {
+        "id": "ibrahimsaricicek-1960",
+        "source": "mapbox://ibrahimsaricicek.1ye7icnp",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "1960"
     },
     {
         "id": "ibrahimsaricicek-1967",
