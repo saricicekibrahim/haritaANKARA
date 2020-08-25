@@ -1,5 +1,6 @@
 {
-  "name": "mapui",
+  "name": "haritaankaramapui",
+  "homepage":"http://e-yazi.com/haritaankara/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

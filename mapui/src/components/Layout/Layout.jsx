@@ -10,14 +10,14 @@ const DefaultContainer = () => (
         {/* <Sidebar /> */}
         <div id="page-content-wrapper">
             {/* <Navbar /> */}
-            <Route path="/" exact component={Home} />
-            <Route path="/map" exact component={Map} />
+            <Route path="/" exact component={Map} />
+            <Route path="/map" exact component={Home} />
         </div>
     </div>
 )
 
 const layout = () => (
-    <BrowserRouter>
+    <BrowserRouter basename="/haritaankara">
         <Switch>
             {/* <Route path="/" exact component={SignIn} /> */}
             <Route component={DefaultContainer} />
