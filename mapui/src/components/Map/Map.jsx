@@ -1,10 +1,10 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
-import { MAPBOX_TOKEN } from "../../Constants"
+import { MAP_CONSTANTS } from "../../Constants"
 import "./Map.css";
 import { layers } from './Layers';
 
-mapboxgl.accessToken = MAPBOX_TOKEN;
+mapboxgl.accessToken = MAP_CONSTANTS.MAPBOX_TOKEN;
 let map;
 
 class Map extends React.Component {
@@ -23,7 +23,9 @@ class Map extends React.Component {
             container: this.mapContainer,
             style: 'mapbox://styles/mapbox/satellite-v9',
             center: [this.state.lng, this.state.lat],
-            zoom: this.state.zoom
+            zoom: this.state.zoom,
+			pitch: 40, // pitch in degrees
+			bearing: -20, // bearing in degrees
         });
 
         map.on('load', function () {
@@ -71,22 +73,31 @@ class Map extends React.Component {
         return (
             <div>
                 <div className='sidebarStyle'>
-                    <h3>Katmangiller</h3>
+                    <h3 className='mapText'>Katmanlar</h3>
                     <br />
-                    <h4>Harrriitaa</h4>
-                    <div class="form-check">
-                        {layers.map(layer => (
+                    <h4 className='mapText'>Haritalar</h4>
+                    <div className="form-check">
+                        {layers.filter(layers => layers.type === MAP_CONSTANTS.MAP_TXT).map(layer => (
                             <div>
-                                <input class="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
-                                <label class="form-check-label" for={layer.id}>
+                                <input className="form-check-input mapText" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
+                                <label className="form-check-label mapText" for={layer.id}>
                                     {layer.displayName}
                                 </label>
                             </div>
                         ))}
                     </div>
-
                     <br />
-
+                    <h4 className='mapText'>Planlar</h4>
+                    <div className="form-check">
+                        {layers.filter(layers => layers.type === MAP_CONSTANTS.PLAN_TXT).map(layer => (
+                            <div>
+                                <input className="form-check-input mapText" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
+                                <label className="form-check-label mapText" for={layer.id}>
+                                    {layer.displayName}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
                     <div className="fixed-bottom">
                         {this.state.lng} 
                         | {this.state.lat}
