@@ -50,11 +50,27 @@ export const layers = [
         type: MAP_CONSTANTS.MAP_TXT
     },
     {
+        "id": "ibrahimsaricicek-jansen2k",
+        "source": "mapbox://ibrahimsaricicek.6q2job56",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "jansen 1937 1/2k",
+        type: MAP_CONSTANTS.PLAN_TXT
+    },
+    {
+        "id": "ibrahimsaricicek-jansen10k",
+        "source": "mapbox://ibrahimsaricicek.af8xz8o4",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "jansen 1937 1/10k",
+        type: MAP_CONSTANTS.PLAN_TXT
+    },
+    {
         "id": "ibrahimsaricicek-uybadin",
         "source": "mapbox://ibrahimsaricicek.4m7bqzvr",
         'minzoom': 11.19,
         'maxzoom': 22,
-        displayName: "uybadin",
+        displayName: "uybadin - yücel 1957",
         type: MAP_CONSTANTS.PLAN_TXT
     }
 ]

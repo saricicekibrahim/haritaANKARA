@@ -13,9 +13,18 @@ class Map extends React.Component {
         this.state = {
             lng: 32.859,
             lat: 39.938,
-            zoom: 13.99,
-            map: null
+            zoom: 13.99
         };
+    }
+
+    handleLayerOpacityChange = (layerId, event) => {
+        this.setState({ value: event.target.value });
+        console.log(event.target.value);
+        map.setPaintProperty(
+            layerId,
+            'raster-opacity',
+            parseInt(event.target.value, 10) / 100
+        );
     }
 
     componentDidMount() {
@@ -24,8 +33,8 @@ class Map extends React.Component {
             style: 'mapbox://styles/mapbox/satellite-v9',
             center: [this.state.lng, this.state.lat],
             zoom: this.state.zoom,
-			pitch: 40, // pitch in degrees
-			bearing: -20, // bearing in degrees
+            pitch: 40, // pitch in degrees
+            bearing: -20, // bearing in degrees
         });
 
         map.on('load', function () {
@@ -72,34 +81,50 @@ class Map extends React.Component {
     render() {
         return (
             <div>
-                <div className='sidebarStyle'>
-                    <h3 className='mapText'>Katmanlar</h3>
+                <div className='sidebarStyle' >
+                    <h3>Katmanlar</h3>
                     <br />
-                    <h4 className='mapText'>Haritalar</h4>
+                    <h4>Haritalar</h4>
                     <div className="form-check">
                         {layers.filter(layers => layers.type === MAP_CONSTANTS.MAP_TXT).map(layer => (
                             <div>
-                                <input className="form-check-input mapText" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
-                                <label className="form-check-label mapText" for={layer.id}>
+                                <input className="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
+                                <label className="form-check-label" for={layer.id}>
                                     {layer.displayName}
                                 </label>
+                                <br />
+                                <input className="slider"
+                                    id={"slider-" + layer.id}
+                                    type="range"
+                                    min="0" max="100"
+                                    onChange={(e) => this.handleLayerOpacityChange(layer.id, e)}
+                                    step="1"
+                                    defaultValue="100" />
                             </div>
                         ))}
                     </div>
                     <br />
-                    <h4 className='mapText'>Planlar</h4>
+                    <h4>Planlar</h4>
                     <div className="form-check">
                         {layers.filter(layers => layers.type === MAP_CONSTANTS.PLAN_TXT).map(layer => (
                             <div>
-                                <input className="form-check-input mapText" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
-                                <label className="form-check-label mapText" for={layer.id}>
+                                <input className="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
+                                <label className="form-check-label" for={layer.id}>
                                     {layer.displayName}
                                 </label>
+                                <br />
+                                <input className="slider"
+                                    id={"slider-" + layer.id}
+                                    type="range"
+                                    min="0" max="100"
+                                    onChange={(e) => this.handleLayerOpacityChange(layer.id, e)}
+                                    step="1"
+                                    defaultValue="100" />
                             </div>
                         ))}
                     </div>
                     <div className="fixed-bottom">
-                        {this.state.lng} 
+                        {this.state.lng}
                         | {this.state.lat}
                         {/* | {this.state.zoom} */}
                     </div>
