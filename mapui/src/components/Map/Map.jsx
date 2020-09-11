@@ -13,7 +13,8 @@ class Map extends React.Component {
         this.state = {
             lng: 32.859,
             lat: 39.938,
-            zoom: 13.99
+            zoom: 13.99,
+            windowWidth: window.innerWidth
         };
     }
 
@@ -68,6 +69,8 @@ class Map extends React.Component {
                 zoom: map.getZoom().toFixed(2)
             });
         });
+
+        this.openNav();
     }
 
     handleLayer = (event) => {
@@ -78,13 +81,24 @@ class Map extends React.Component {
         map.setLayoutProperty(event.target.id, "visibility", visible);
     }
 
+    openNav = () => {
+        document.getElementById("mapSidePanel").style.width = "auto";
+        document.getElementById("menu").hidden = true;
+    }
+
+    closeNav = () => {
+        document.getElementById("mapSidePanel").style.width = "0px";
+        document.getElementById("menu").hidden = false;
+    }
+
     render() {
         return (
             <div>
-                <div className='sidebarStyle' >
-                    <h3>Katmanlar</h3>
+                <div id="mapSidePanel" className='sidePanel' >
+                    <a href="#" class="closebtn" onClick={this.closeNav}>×</a>
+                    <h4>Katmanlar</h4>
                     <br />
-                    <h4>Haritalar</h4>
+                    <h5>Haritalar</h5>
                     <div className="form-check">
                         {layers.filter(layers => layers.type === MAP_CONSTANTS.MAP_TXT).map(layer => (
                             <div>
@@ -123,14 +137,17 @@ class Map extends React.Component {
                             </div>
                         ))}
                     </div>
-                    <div className="fixed-bottom">
-                        {this.state.lng}
-                        | {this.state.lat}
-                        {/* | {this.state.zoom} */}
-                    </div>
                 </div>
+                <nav id="menu" onClick={this.openNav}>
+                    <a href="#">☰</a>
+                </nav>
                 <div ref={el => this.mapContainer = el} className='mapContainer' />
-            </div>
+                <div className="footer fixed-bottom">
+                    <a href="https://www.linkedin.com/in/ibrahimsaricicek/" className="btn btn-dark btn-sm" target="_blank">Geliştiren</a>
+                    |
+                    <a href="https://github.com/saricicekibrahim/haritaANKARA" className="btn btn-dark btn-sm" target="_blank">Kaynak Kod</a>
+                </div>
+            </div >
         )
     }
 }
