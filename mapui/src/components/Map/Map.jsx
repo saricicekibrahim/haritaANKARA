@@ -82,12 +82,18 @@ class Map extends React.Component {
     }
 
     openNav = () => {
-        document.getElementById("mapSidePanel").style.width = "auto";
+        let sidePanel = document.getElementById("mapSidePanel");
+        sidePanel.style.width = "auto";
+        sidePanel.style.paddingLeft = "8px";
+        sidePanel.style.paddingRight = "8px" 
         document.getElementById("menu").hidden = true;
     }
 
     closeNav = () => {
-        document.getElementById("mapSidePanel").style.width = "0px";
+        let sidePanel = document.getElementById("mapSidePanel");
+        sidePanel.style.width = "0px";
+        sidePanel.style.paddingLeft = "0px" 
+        sidePanel.style.paddingRight = "0px" 
         document.getElementById("menu").hidden = false;
     }
 
