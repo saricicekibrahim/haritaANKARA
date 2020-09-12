@@ -1,5 +1,3 @@
-(http://e-yazi.com/images/haritaankara/4maps.png)
-
 “Harita Ankara” keyfekeder yaptığım bir çalışma, hadi mesleki dezenformasyon diyelim.
 Angara bebesi olarak eski haritalara sürekli bakıp Atatürk’ün ve cumhuriyet döneminin eserlerine bakıyordum bunları günümüzle karşılaştırmak istedim.
 
@@ -9,6 +7,8 @@ Tüm akan suların şu an yol olmasını izleyebilirsiniz bu proje ile.
 Aşti’nin bulunduğu alanın 1957 planında golf sahası olarak bırakıldığını.
 1940’da Anıtkabir’in henüz olmadığını.
 2000’de Bağlıca’nın bir köy olduğunu.
+
+![alt tag](http://e-yazi.com/images/haritaankara/4maps.png)
 
 Süreci anlatayım.
 Üniversite hocalarımdan ve birkaç sivil toplum kuruluşundan arşiv paylaşmalarını istedim, cevap bile vermediler.
