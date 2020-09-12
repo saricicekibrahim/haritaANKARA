@@ -149,9 +149,9 @@ class Map extends React.Component {
                 </nav>
                 <div ref={el => this.mapContainer = el} className='mapContainer' />
                 <div className="footer fixed-bottom">
-                    <a href="https://www.linkedin.com/in/ibrahimsaricicek/" className="btn btn-dark btn-sm" target="_blank">Geliştiren</a>
+                    <a href="https://www.linkedin.com/in/ibrahimsaricicek/" className="btn btn-dark btn-sm" target="_blank">Kim Yaptı?</a>
                     |
-                    <a href="https://github.com/saricicekibrahim/haritaANKARA" className="btn btn-dark btn-sm" target="_blank">Kaynak Kod</a>
+                    <a href="https://github.com/saricicekibrahim/haritaANKARA" className="btn btn-dark btn-sm" target="_blank">Bu Nedir?</a>
                 </div>
             </div >
         )
