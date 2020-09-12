@@ -26,4 +26,8 @@ Ekleme çıkarmalara devam edeceğim, başlıklar şurada -> https://github.com/
 
 rawImages klasöründe ham imajlar ve qgis georeference noktaları var. Kendi GeoTiff'inizi üretebilirsiniz.
 
-Şunu da yapsanaaaa yaaaa değil de benim de yapacaklarım var diyenlerin daha sık ulaşmasını bekliyorum. Mailim adımsoyadım @ gmail.com
+Her konuda bana ulaşın.
+Özellikle ✋ o benim, benim eski bir haritam var, diyenler.
+Şunu da yapsanaaaa yaaaa değil de benim de yapacaklarım var diyenlerin daha sık ulaşmasını bekliyorum. 
+
+Mailim adımsoyadım @ gmail.com
