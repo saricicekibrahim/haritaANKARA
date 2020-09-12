@@ -21,7 +21,9 @@ En çok zamanımı alan bunları koordinatlandırma işlemi oldu.
 Bu işlem sonrasında oluşan GeoTiff’leri Mapbox’da yayımladım.
 Yayımlanan harita ve planları Mapbox GL Js, ReactJs ve görsel tarafta Bootstrap kullanarak online harita haline getirdim.
 
-Şuradan ulaşılabilir hale getirdim -> http://e-yazi.com/haritaankara/
-Ekleme çıkarmalara devam edeceğim, başlıklar şurada -> https://github.com/saricicekibrahim/haritaANKARA/issues 
+Şuradan ulaşılabilir hale getirdim -> http://e-yazi.com/haritaankara/     
+Ekleme çıkarmalara devam edeceğim, başlıklar şurada -> https://github.com/saricicekibrahim/haritaANKARA/issues     
+
+rawImages klasöründe ham imajlar ve qgis georeference noktaları var. Kendi GeoTiff'inizi üretebilirsiniz.
 
 Şunu da yapsanaaaa yaaaa değil de benim de yapacaklarım var diyenlerin daha sık ulaşmasını bekliyorum. Mailim adımsoyadım @ gmail.com
