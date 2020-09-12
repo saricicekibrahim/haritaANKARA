@@ -10,7 +10,7 @@ Aşti’nin bulunduğu alanın 1957 planında golf sahası olarak bırakıldığ
 1940’da Anıtkabir’in henüz olmadığını.
 2000’de Bağlıca’nın bir köy olduğunu.
 
-![alt tag](http://e-yazi.com/images/haritaankara/4maps.png)
+![alt tag](http://e-yazi.com/images/haritaankara/4maps_sm.png)
 
 Süreci anlatayım.
 Üniversite hocalarımdan ve birkaç sivil toplum kuruluşundan arşiv paylaşmalarını istedim, cevap bile vermediler.
