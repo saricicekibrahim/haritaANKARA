@@ -4,10 +4,10 @@
 Angara bebesi olarak eski haritalara sürekli bakıp Atatürk’ün ve cumhuriyet döneminin eserlerine bakıyordum bunları günümüzle karşılaştırmak istedim.
 
 Belki tarihsel süreçte kente kazandırılanlar ve kente yapılan eziyetleri de izlemek olanaklı olur.
-Özellikle “Ankara’nın Altında Dereler Var” Belgeselini izledikten sonra her dönem yapılan eziyet biraz daha anlaşılır oluyor. 
-Tüm akan suların şu an yol olmasını izleyebilirsiniz bu proje ile.
-Aşti’nin bulunduğu alanın 1957 planında golf sahası olarak bırakıldığını.
-1940’da Anıtkabir’in henüz olmadığını.
+Özellikle “Ankara’nın Altında Dereler Var” Belgeselini izledikten sonra her dönem yapılan eziyet biraz daha anlaşılır oluyor.     
+Tüm akarsuların şu an yol olmasını izleyebilirsiniz bu proje ile.     
+Aşti’nin bulunduğu alanın 1957 planında golf sahası olarak bırakıldığını.     
+1940’da Anıtkabir’in henüz olmadığını.     
 2000’de Bağlıca’nın bir köy olduğunu.
 
 ![alt tag](http://e-yazi.com/images/haritaankara/4maps_sm.png)
