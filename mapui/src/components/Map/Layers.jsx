@@ -42,6 +42,14 @@ export const layers = [
         type: MAP_CONSTANTS.MAP_TXT
     },
     {
+        "id": "ibrahimsaricicek-1982",
+        "source": "mapbox://ibrahimsaricicek.9f9huxo4",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "1982",
+        type: MAP_CONSTANTS.MAP_TXT
+    },
+    {
         "id": "ibrahimsaricicek-2000",
         "source": "mapbox://ibrahimsaricicek.3gthe4bm",
         'minzoom': 11.19,
