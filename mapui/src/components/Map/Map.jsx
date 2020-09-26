@@ -3,9 +3,24 @@ import mapboxgl from 'mapbox-gl';
 import { MAP_CONSTANTS } from "../../Constants"
 import "./Map.css";
 import { layers } from './Layers';
+import {
+    Accordion,
+    AccordionItem,
+    AccordionItemButton,
+    AccordionItemHeading,
+    AccordionItemPanel,
+} from 'react-accessible-accordion';
+
+import 'react-accessible-accordion/dist/fancy-example.css';
 
 mapboxgl.accessToken = MAP_CONSTANTS.MAPBOX_TOKEN;
 let map;
+
+let layersAccordion = [
+    { type: MAP_CONSTANTS.MAP_TXT, heading: "Haritalar" },
+    { type: MAP_CONSTANTS.PLAN_TXT, heading: "Planlar" },
+    { type: MAP_CONSTANTS.AERIAL_TXT, heading: "Hava Fotoğrafları" }
+]
 
 class Map extends React.Component {
     constructor(props) {
@@ -85,15 +100,17 @@ class Map extends React.Component {
         let sidePanel = document.getElementById("mapSidePanel");
         sidePanel.style.width = "auto";
         sidePanel.style.paddingLeft = "8px";
-        sidePanel.style.paddingRight = "8px" 
+        sidePanel.style.paddingRight = "8px";
+        sidePanel.style.minWidth = "250px";
         document.getElementById("menu").hidden = true;
     }
 
     closeNav = () => {
         let sidePanel = document.getElementById("mapSidePanel");
         sidePanel.style.width = "0px";
-        sidePanel.style.paddingLeft = "0px" 
-        sidePanel.style.paddingRight = "0px" 
+        sidePanel.style.paddingLeft = "0px";
+        sidePanel.style.paddingRight = "0px";
+        sidePanel.style.minWidth = "0px";
         document.getElementById("menu").hidden = false;
     }
 
@@ -103,46 +120,38 @@ class Map extends React.Component {
                 <div id="mapSidePanel" className='sidePanel' >
                     <a href="#" class="closebtn" onClick={this.closeNav}>×</a>
                     <h4>Katmanlar</h4>
-                    <br />
-                    <h5>Haritalar</h5>
-                    <div className="form-check">
-                        {layers.filter(layers => layers.type === MAP_CONSTANTS.MAP_TXT).map(layer => (
-                            <div>
-                                <input className="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
-                                <label className="form-check-label" for={layer.id}>
-                                    {layer.displayName}
-                                </label>
-                                <br />
-                                <input className="slider"
-                                    id={"slider-" + layer.id}
-                                    type="range"
-                                    min="0" max="100"
-                                    onChange={(e) => this.handleLayerOpacityChange(layer.id, e)}
-                                    step="1"
-                                    defaultValue="100" />
-                            </div>
+                    <Accordion allowZeroExpanded>
+                        {layersAccordion.map((item) => (
+                            <AccordionItem key={item.type}>
+                                <AccordionItemHeading>
+                                    <AccordionItemButton>
+                                        {item.heading}
+                                    </AccordionItemButton>
+                                </AccordionItemHeading>
+                                <AccordionItemPanel>
+                                    <div className="form-check">
+                                        {layers.filter(layers => layers.type === item.type).map(layer => (
+                                            <div>
+                                                <input className="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
+                                                <label className="form-check-label" for={layer.id}>
+                                                    {layer.displayName}
+                                                </label>
+                                                <br />
+                                                <input className="slider"
+                                                    id={"slider-" + layer.id}
+                                                    type="range"
+                                                    min="0" max="100"
+                                                    onChange={(e) => this.handleLayerOpacityChange(layer.id, e)}
+                                                    step="1"
+                                                    defaultValue="100" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </AccordionItemPanel>
+                            </AccordionItem>
                         ))}
-                    </div>
-                    <br />
-                    <h4>Planlar</h4>
-                    <div className="form-check">
-                        {layers.filter(layers => layers.type === MAP_CONSTANTS.PLAN_TXT).map(layer => (
-                            <div>
-                                <input className="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
-                                <label className="form-check-label" for={layer.id}>
-                                    {layer.displayName}
-                                </label>
-                                <br />
-                                <input className="slider"
-                                    id={"slider-" + layer.id}
-                                    type="range"
-                                    min="0" max="100"
-                                    onChange={(e) => this.handleLayerOpacityChange(layer.id, e)}
-                                    step="1"
-                                    defaultValue="100" />
-                            </div>
-                        ))}
-                    </div>
+                    </Accordion>
+
                 </div>
                 <nav id="menu" onClick={this.openNav}>
                     <a href="#">☰</a>

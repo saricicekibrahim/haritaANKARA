@@ -62,7 +62,7 @@ export const layers = [
         "source": "mapbox://ibrahimsaricicek.6q2job56",
         'minzoom': 11.19,
         'maxzoom': 22,
-        displayName: "jansen 1937 1/2k",
+        displayName: "1937 jansen 1/2k",
         type: MAP_CONSTANTS.PLAN_TXT
     },
     {
@@ -70,7 +70,7 @@ export const layers = [
         "source": "mapbox://ibrahimsaricicek.af8xz8o4",
         'minzoom': 11.19,
         'maxzoom': 22,
-        displayName: "jansen 1937 1/10k",
+        displayName: "1937 jansen 1/10k",
         type: MAP_CONSTANTS.PLAN_TXT
     },
     {
@@ -78,7 +78,31 @@ export const layers = [
         "source": "mapbox://ibrahimsaricicek.4m7bqzvr",
         'minzoom': 11.19,
         'maxzoom': 22,
-        displayName: "uybadin - yücel 1957",
+        displayName: "1957 uybadin - yücel",
         type: MAP_CONSTANTS.PLAN_TXT
+    },
+    {
+        "id": "ibrahimsaricicek-havaUlus",
+        "source": "mapbox://ibrahimsaricicek.55rjw10l",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "1939 Ulus",
+        type: MAP_CONSTANTS.AERIAL_TXT
+    },
+    {
+        "id": "ibrahimsaricicek-havaYenisehir",
+        "source": "mapbox://ibrahimsaricicek.1q7gsalu",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "1939 Yenisehir",
+        type: MAP_CONSTANTS.AERIAL_TXT
+    },
+    {
+        "id": "ibrahimsaricicek-havaKizilay",
+        "source": "mapbox://ibrahimsaricicek.2lfjm4l2",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "1939 Kızılay",
+        type: MAP_CONSTANTS.AERIAL_TXT
     }
 ]
