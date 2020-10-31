@@ -13,7 +13,7 @@ Ya da 2000’de Bağlıca’nın henüz bir köy olduğunu.
 ![alt tag](http://e-yazi.com/images/haritaankara/4maps_sm.png)
 
 Süreci anlatayım.     
-Üniversite hocalarımdan ve birkaç sivil toplum kuruluşundan arşiv paylaşmalarını istedim, cevap bile vermediler.     
+Üniversite hocalarımdan ve birkaç sivil toplum kuruluşundan arşiv paylaşmalarını istedim, cevap alamadım.     
 Harita ve planların tümünü internetten buldum.     
 Buldukça da eklemeye devam ediyorum.     
 Bulduklarım yalnız bir imajdı, koordinat bilgileri yoktu.     
