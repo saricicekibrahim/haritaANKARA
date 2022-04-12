@@ -42,11 +42,27 @@ export const layers = [
         type: MAP_CONSTANTS.MAP_TXT
     },
     {
+        "id": "ibrahimsaricicek-1972",
+        "source": "mapbox://ibrahimsaricicek.6ur7v89f",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "1972",
+        type: MAP_CONSTANTS.MAP_TXT
+    },
+    {
         "id": "ibrahimsaricicek-1982",
         "source": "mapbox://ibrahimsaricicek.9f9huxo4",
         'minzoom': 11.19,
         'maxzoom': 22,
         displayName: "1982",
+        type: MAP_CONSTANTS.MAP_TXT
+    },
+    {
+        "id": "ibrahimsaricicek-1998",
+        "source": "mapbox://ibrahimsaricicek.271ogmjx",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "1998",
         type: MAP_CONSTANTS.MAP_TXT
     },
     {
@@ -71,6 +87,14 @@ export const layers = [
         'minzoom': 11.19,
         'maxzoom': 22,
         displayName: "1937 jansen 1/10k",
+        type: MAP_CONSTANTS.PLAN_TXT
+    },
+    {
+        "id": "ibrahimsaricicek-1950",
+        "source": "mapbox://ibrahimsaricicek.b1wu32q2",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "1950",
         type: MAP_CONSTANTS.PLAN_TXT
     },
     {
