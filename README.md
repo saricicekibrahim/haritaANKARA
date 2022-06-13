@@ -1,6 +1,6 @@
 # Harita ANKARA
 
-“Harita Ankara” keyfekeder yaptığım bir çalışma, hadi mesleki dezenformasyon diyelim.
+“Harita Ankara” keyfekeder yaptığım bir çalışma, hadi mesleki deformasyon ürünü diyelim.
 Angara bebesi olarak eski haritaları sürekli inceleyip Atatürk’ün ve Cumhuriyet Dönemi'nin eserlerine bakarken, bunları günümüzle karşılaştırmak istedim.
 
 Belki tarihsel süreçte kente kazandırılanlar ve kente yapılan eziyetleri de izlemek olanaklı olur.
