@@ -128,5 +128,21 @@ export const layers = [
         'maxzoom': 22,
         displayName: "1939 Kızılay",
         type: MAP_CONSTANTS.AERIAL_TXT
+    },
+    {
+        "id": "clbmjmh92000e14rx6s6rq7gz",
+        "source": "mapbox://ibrahimsaricicek.4nntm00c",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "2011",
+        type: MAP_CONSTANTS.AERIAL_TXT
+    },
+    {
+        "id": "clbmhv89d000d14pg66gc1vz9",
+        "source": "mapbox://ibrahimsaricicek.8gmmk331",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "2018",
+        type: MAP_CONSTANTS.AERIAL_TXT
     }
 ]
