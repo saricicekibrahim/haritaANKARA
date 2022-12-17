@@ -106,6 +106,14 @@ export const layers = [
         type: MAP_CONSTANTS.PLAN_TXT
     },
     {
+        "id": "clbshfshp005214o7ad5sw4pi",
+        "source": "mapbox://ibrahimsaricicek.c4y1chmh",
+        'minzoom': 11.19,
+        'maxzoom': 22,
+        displayName: "1934 Kızılay",
+        type: MAP_CONSTANTS.AERIAL_TXT
+    },
+    {
         "id": "ibrahimsaricicek-havaUlus",
         "source": "mapbox://ibrahimsaricicek.55rjw10l",
         'minzoom': 11.19,
