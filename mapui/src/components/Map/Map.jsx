@@ -29,7 +29,8 @@ class Map extends React.Component {
             lng: 32.854386,
             lat: 39.930696,
             zoom: 12.4,
-            windowWidth: window.innerWidth
+            windowWidth: window.innerWidth,
+            mapLoaded: false
         };
     }
 
@@ -53,7 +54,7 @@ class Map extends React.Component {
             bearing: -20, // bearing in degrees
         });
 
-        map.on('load', function () {
+        map.on('load', () => {
             layers.forEach(layer => {
                 map.addSource(layer.source, {
                     "url": layer.source,
@@ -75,6 +76,7 @@ class Map extends React.Component {
                 });
             }
             );
+            this.setState({ mapLoaded: true });
         });
 
         map.on('move', () => {
@@ -94,6 +96,44 @@ class Map extends React.Component {
             visible = "visible"
         }
         map.setLayoutProperty(event.target.id, "visibility", visible);
+        if (event.target.checked) {
+            this.zoomToLayer(layers.find(layer => layer.id === event.target.id));
+        }
+    }
+
+    // Fly to the extent of a layer. The extent comes from the tileset's TileJSON,
+    // which mapbox-gl has already loaded into the source.
+    zoomToLayer = (layer) => {
+        const source = map.getSource(layer.source);
+        if (!source || !source.bounds) {
+            const onSourceData = (e) => {
+                if (e.sourceId === layer.source && e.isSourceLoaded) {
+                    map.off('sourcedata', onSourceData);
+                    this.zoomToLayer(layer);
+                }
+            };
+            map.on('sourcedata', onSourceData);
+            return;
+        }
+
+        // Keep the layer clear of the side panel, unless the panel covers most of the screen (mobile).
+        const panel = document.getElementById("mapSidePanel");
+        const panelWidth = panel ? panel.offsetWidth : 0;
+        const left = panelWidth < map.getContainer().clientWidth / 2 ? panelWidth : 0;
+        const bearing = map.getBearing();
+        const camera =
+            map.cameraForBounds(source.bounds, { bearing, padding: { top: 40, bottom: 60, right: 40, left: left + 40 } }) ||
+            map.cameraForBounds(source.bounds, { bearing });
+        if (!camera) return;
+
+        map.flyTo({
+            center: camera.center,
+            // A layer is hidden below its minzoom, so never stop further out than that.
+            zoom: Math.max(camera.zoom, layer.minzoom + 0.1),
+            bearing,
+            pitch: map.getPitch(),
+            speed: 1.4
+        });
     }
 
     openNav = () => {
@@ -132,7 +172,7 @@ class Map extends React.Component {
                                     <div className="form-check">
                                         {layers.filter(layers => layers.type === item.type).map(layer => (
                                             <div>
-                                                <input className="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
+                                                <input className="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} disabled={!this.state.mapLoaded} />
                                                 <label className="form-check-label" for={layer.id}>
                                                     {layer.displayName}
                                                 </label>
@@ -143,6 +183,7 @@ class Map extends React.Component {
                                                     min="0" max="100"
                                                     onChange={(e) => this.handleLayerOpacityChange(layer.id, e)}
                                                     step="1"
+                                                    disabled={!this.state.mapLoaded}
                                                     defaultValue="100" />
                                             </div>
                                         ))}
