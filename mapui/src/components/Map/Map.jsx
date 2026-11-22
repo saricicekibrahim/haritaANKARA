@@ -4,6 +4,7 @@ import { MAP_CONSTANTS } from "../../Constants"
 import 'mapbox-gl/dist/mapbox-gl.css';
 import "./Map.css";
 import { layers } from './Layers';
+import About from '../About/About';
 import {
     Accordion,
     AccordionItem,
@@ -30,6 +31,7 @@ class Map extends React.Component {
         this.state = {
             mapLoaded: false,
             panelOpen: window.innerWidth >= NARROW_SCREEN,
+            aboutOpen: false,
             visible: {},
             opacity: {}
         };
@@ -133,8 +135,12 @@ class Map extends React.Component {
         this.setState({ panelOpen });
     }
 
+    setAboutOpen = (aboutOpen) => {
+        this.setState({ aboutOpen });
+    }
+
     render() {
-        const { mapLoaded, panelOpen, visible, opacity } = this.state;
+        const { mapLoaded, panelOpen, aboutOpen, visible, opacity } = this.state;
 
         return (
             <div className="mapApp" ref={el => this.appContainer = el}>
@@ -144,7 +150,7 @@ class Map extends React.Component {
                             <h1 className="sidePanel-title">Harita Ankara</h1>
                             <p className="sidePanel-subtitle">
                                 Ankara'nın eski haritaları, planları ve hava fotoğrafları.{' '}
-                                <a href="https://github.com/saricicekibrahim/haritaANKARA" target="_blank" rel="noopener noreferrer">Bu nedir?</a>
+                                <button type="button" className="linkButton" onClick={() => this.setAboutOpen(true)}>Bu nedir?</button>
                             </p>
                         </div>
                         <button type="button" className="iconButton" onClick={() => this.setPanelOpen(false)} aria-label="Paneli kapat">×</button>
@@ -213,6 +219,8 @@ class Map extends React.Component {
                 )}
 
                 <div ref={el => this.mapContainer = el} className='mapContainer' />
+
+                <About open={aboutOpen} onClose={() => this.setAboutOpen(false)} />
             </div>
         )
     }
