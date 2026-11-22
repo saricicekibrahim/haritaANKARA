@@ -1,6 +1,7 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import { MAP_CONSTANTS } from "../../Constants"
+import 'mapbox-gl/dist/mapbox-gl.css';
 import "./Map.css";
 import { layers } from './Layers';
 import {
