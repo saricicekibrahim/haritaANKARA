@@ -12,8 +12,6 @@ import {
     AccordionItemPanel,
 } from 'react-accessible-accordion';
 
-import 'react-accessible-accordion/dist/fancy-example.css';
-
 mapboxgl.accessToken = MAP_CONSTANTS.MAPBOX_TOKEN;
 let map;
 
@@ -23,38 +21,39 @@ let layersAccordion = [
     { type: MAP_CONSTANTS.AERIAL_TXT, heading: "Hava Fotoğrafları" }
 ]
 
+// Below this width the side panel would cover most of the map, so it starts closed.
+const NARROW_SCREEN = 768;
+
 class Map extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            lng: 32.854386,
-            lat: 39.930696,
-            zoom: 12.4,
-            windowWidth: window.innerWidth
+            mapLoaded: false,
+            panelOpen: window.innerWidth >= NARROW_SCREEN,
+            visible: {},
+            opacity: {}
         };
-    }
-
-    handleLayerOpacityChange = (layerId, event) => {
-        this.setState({ value: event.target.value });
-        console.log(event.target.value);
-        map.setPaintProperty(
-            layerId,
-            'raster-opacity',
-            parseInt(event.target.value, 10) / 100
-        );
     }
 
     componentDidMount() {
         map = new mapboxgl.Map({
             container: this.mapContainer,
             style: 'mapbox://styles/mapbox/satellite-v9',
-            center: [this.state.lng, this.state.lat],
-            zoom: this.state.zoom,
+            center: [32.854386, 39.930696],
+            zoom: 12.4,
             pitch: 40, // pitch in degrees
             bearing: -20, // bearing in degrees
+            // The credit sits with the other map credits in the bottom-right corner.
+            customAttribution: '<a href="https://www.linkedin.com/in/ibrahimsaricicek/" target="_blank" rel="noopener noreferrer">Harita Ankara: İbrahim Sarıçiçek</a>'
         });
 
-        map.on('load', function () {
+        map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'top-right');
+        map.addControl(new mapboxgl.GeolocateControl({ positionOptions: { enableHighAccuracy: true } }), 'top-right');
+        // Full screen takes the side panel along with the map.
+        map.addControl(new mapboxgl.FullscreenControl({ container: this.appContainer }), 'top-right');
+        map.addControl(new mapboxgl.ScaleControl(), 'bottom-right');
+
+        map.on('load', () => {
             layers.forEach(layer => {
                 map.addSource(layer.source, {
                     "url": layer.source,
@@ -76,94 +75,156 @@ class Map extends React.Component {
                 });
             }
             );
+            this.setState({ mapLoaded: true });
         });
-
-        map.on('move', () => {
-            this.setState({
-                lng: map.getCenter().lng.toFixed(4),
-                lat: map.getCenter().lat.toFixed(4),
-                zoom: map.getZoom().toFixed(2)
-            });
-        });
-
-        this.openNav();
     }
 
-    handleLayer = (event) => {
-        let visible = "none";
-        if (event.target.checked) {
-            visible = "visible"
+    handleLayer = (layer, event) => {
+        const checked = event.target.checked;
+        map.setLayoutProperty(layer.id, "visibility", checked ? "visible" : "none");
+        this.setState(state => ({ visible: { ...state.visible, [layer.id]: checked } }));
+        if (checked) {
+            this.zoomToLayer(layer);
         }
-        map.setLayoutProperty(event.target.id, "visibility", visible);
     }
 
-    openNav = () => {
-        let sidePanel = document.getElementById("mapSidePanel");
-        sidePanel.style.width = "auto";
-        sidePanel.style.paddingLeft = "8px";
-        sidePanel.style.paddingRight = "8px";
-        sidePanel.style.minWidth = "250px";
-        document.getElementById("menu").hidden = true;
+    handleLayerOpacityChange = (layer, event) => {
+        const value = parseInt(event.target.value, 10);
+        map.setPaintProperty(layer.id, 'raster-opacity', value / 100);
+        this.setState(state => ({ opacity: { ...state.opacity, [layer.id]: value } }));
     }
 
-    closeNav = () => {
-        let sidePanel = document.getElementById("mapSidePanel");
-        sidePanel.style.width = "0px";
-        sidePanel.style.paddingLeft = "0px";
-        sidePanel.style.paddingRight = "0px";
-        sidePanel.style.minWidth = "0px";
-        document.getElementById("menu").hidden = false;
+    // Fly to the extent of a layer, unless the user is already looking at it. The extent
+    // comes from the tileset's TileJSON, which mapbox-gl has already loaded into the source.
+    zoomToLayer = (layer) => {
+        const source = map.getSource(layer.source);
+        if (!source || !source.bounds) {
+            const onSourceData = (e) => {
+                if (e.sourceId === layer.source && e.isSourceLoaded) {
+                    map.off('sourcedata', onSourceData);
+                    this.zoomToLayer(layer);
+                }
+            };
+            map.on('sourcedata', onSourceData);
+            return;
+        }
+
+        // If the layer covers the middle of the screen, the user may have gone there on purpose,
+        // so stay put. A layer is hidden below its minzoom, so zoom in just enough, in place.
+        const [west, south, east, north] = source.bounds;
+        const { lng, lat } = map.getCenter();
+        if (lng >= west && lng <= east && lat >= south && lat <= north) {
+            if (map.getZoom() < layer.minzoom) {
+                map.easeTo({ zoom: layer.minzoom + 0.1 });
+            }
+            return;
+        }
+
+        // Keep the layer clear of the side panel, unless the panel covers most of the screen (mobile).
+        const panel = document.getElementById("mapSidePanel");
+        const panelRight = panel && this.state.panelOpen ? panel.getBoundingClientRect().right : 0;
+        const left = panelRight < map.getContainer().clientWidth / 2 ? panelRight : 0;
+        const bearing = map.getBearing();
+        const camera =
+            map.cameraForBounds(source.bounds, { bearing, padding: { top: 40, bottom: 60, right: 40, left: left + 40 } }) ||
+            map.cameraForBounds(source.bounds, { bearing });
+        if (!camera) return;
+
+        map.flyTo({
+            center: camera.center,
+            // A layer is hidden below its minzoom, so never stop further out than that.
+            zoom: Math.max(camera.zoom, layer.minzoom + 0.1),
+            bearing,
+            pitch: map.getPitch(),
+            speed: 1.4
+        });
+    }
+
+    setPanelOpen = (panelOpen) => {
+        this.setState({ panelOpen });
     }
 
     render() {
-        return (
-            <div>
-                <div id="mapSidePanel" className='sidePanel' >
-                    <a href="#" class="closebtn" onClick={this.closeNav}>×</a>
-                    <h4>Katmanlar</h4>
-                    <Accordion allowZeroExpanded>
-                        {layersAccordion.map((item) => (
-                            <AccordionItem key={item.type}>
-                                <AccordionItemHeading>
-                                    <AccordionItemButton>
-                                        {item.heading}
-                                    </AccordionItemButton>
-                                </AccordionItemHeading>
-                                <AccordionItemPanel>
-                                    <div className="form-check">
-                                        {layers.filter(layers => layers.type === item.type).map(layer => (
-                                            <div>
-                                                <input className="form-check-input" type="checkbox" value="" onClick={this.handleLayer} id={layer.id} />
-                                                <label className="form-check-label" for={layer.id}>
-                                                    {layer.displayName}
-                                                </label>
-                                                <br />
-                                                <input className="slider"
-                                                    id={"slider-" + layer.id}
-                                                    type="range"
-                                                    min="0" max="100"
-                                                    onChange={(e) => this.handleLayerOpacityChange(layer.id, e)}
-                                                    step="1"
-                                                    defaultValue="100" />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </AccordionItemPanel>
-                            </AccordionItem>
-                        ))}
-                    </Accordion>
+        const { mapLoaded, panelOpen, visible, opacity } = this.state;
 
-                </div>
-                <nav id="menu" onClick={this.openNav}>
-                    <a href="#">☰</a>
-                </nav>
+        return (
+            <div className="mapApp" ref={el => this.appContainer = el}>
+                <aside id="mapSidePanel" className={panelOpen ? 'sidePanel' : 'sidePanel closed'} aria-label="Katmanlar">
+                    <header className="sidePanel-header">
+                        <div>
+                            <h1 className="sidePanel-title">Harita Ankara</h1>
+                            <p className="sidePanel-subtitle">
+                                Ankara'nın eski haritaları, planları ve hava fotoğrafları.{' '}
+                                <a href="https://github.com/saricicekibrahim/haritaANKARA" target="_blank" rel="noopener noreferrer">Bu nedir?</a>
+                            </p>
+                        </div>
+                        <button type="button" className="iconButton" onClick={() => this.setPanelOpen(false)} aria-label="Paneli kapat">×</button>
+                    </header>
+
+                    <div className="sidePanel-body">
+                        <Accordion allowZeroExpanded>
+                            {layersAccordion.map((item) => {
+                                const groupLayers = layers.filter(layer => layer.type === item.type);
+                                const openCount = groupLayers.filter(layer => visible[layer.id]).length;
+                                return (
+                                    <AccordionItem key={item.type}>
+                                        <AccordionItemHeading>
+                                            <AccordionItemButton>
+                                                {item.heading}
+                                                {openCount > 0 && <span className="countBadge" aria-label={`${openCount} katman açık`}>{openCount}</span>}
+                                            </AccordionItemButton>
+                                        </AccordionItemHeading>
+                                        <AccordionItemPanel>
+                                            <ul className="layerList">
+                                                {groupLayers.map(layer => {
+                                                    const isOpen = !!visible[layer.id];
+                                                    const value = opacity[layer.id] === undefined ? 100 : opacity[layer.id];
+                                                    return (
+                                                        <li key={layer.id} className={isOpen ? 'layerItem active' : 'layerItem'}>
+                                                            <label className="layerToggle">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={isOpen}
+                                                                    onChange={(e) => this.handleLayer(layer, e)}
+                                                                    disabled={!mapLoaded} />
+                                                                <span>{layer.displayName}</span>
+                                                            </label>
+                                                            {isOpen && (
+                                                                <div className="opacityRow">
+                                                                    <input
+                                                                        className="slider"
+                                                                        type="range"
+                                                                        min="0" max="100" step="1"
+                                                                        value={value}
+                                                                        onChange={(e) => this.handleLayerOpacityChange(layer, e)}
+                                                                        aria-label={`${layer.displayName} opaklığı`} />
+                                                                    <span className="opacityValue">%{value}</span>
+                                                                </div>
+                                                            )}
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        </AccordionItemPanel>
+                                    </AccordionItem>
+                                );
+                            })}
+                        </Accordion>
+                    </div>
+                </aside>
+
+                {!panelOpen && (
+                    <button type="button" className="menuButton" onClick={() => this.setPanelOpen(true)}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M12 3 2 8l10 5 10-5-10-5z" />
+                            <path d="m2 13 10 5 10-5" />
+                        </svg>
+                        Katmanlar
+                    </button>
+                )}
+
                 <div ref={el => this.mapContainer = el} className='mapContainer' />
-                <div className="footer fixed-bottom">
-                    <a href="https://www.linkedin.com/in/ibrahimsaricicek/" className="btn btn-dark btn-sm" target="_blank">Kim Yaptı?</a>
-                    |
-                    <a href="https://github.com/saricicekibrahim/haritaANKARA" className="btn btn-dark btn-sm" target="_blank">Bu Nedir?</a>
-                </div>
-            </div >
+            </div>
         )
     }
 }
