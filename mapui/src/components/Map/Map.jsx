@@ -94,8 +94,8 @@ class Map extends React.Component {
         this.setState(state => ({ opacity: { ...state.opacity, [layer.id]: value } }));
     }
 
-    // Fly to the extent of a layer. The extent comes from the tileset's TileJSON,
-    // which mapbox-gl has already loaded into the source.
+    // Fly to the extent of a layer, unless the user is already looking at it. The extent
+    // comes from the tileset's TileJSON, which mapbox-gl has already loaded into the source.
     zoomToLayer = (layer) => {
         const source = map.getSource(layer.source);
         if (!source || !source.bounds) {
@@ -106,6 +106,17 @@ class Map extends React.Component {
                 }
             };
             map.on('sourcedata', onSourceData);
+            return;
+        }
+
+        // If the layer covers the middle of the screen, the user may have gone there on purpose,
+        // so stay put. A layer is hidden below its minzoom, so zoom in just enough, in place.
+        const [west, south, east, north] = source.bounds;
+        const { lng, lat } = map.getCenter();
+        if (lng >= west && lng <= east && lat >= south && lat <= north) {
+            if (map.getZoom() < layer.minzoom) {
+                map.easeTo({ zoom: layer.minzoom + 0.1 });
+            }
             return;
         }
 
