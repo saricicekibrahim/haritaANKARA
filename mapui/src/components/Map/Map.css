@@ -90,13 +90,19 @@
     padding: 6px 8px;
 }
 
-.sidePanel-subtitle a {
+.linkButton {
+    padding: 0;
     color: #93c5fd;
+    font: inherit;
     white-space: nowrap;
+    background: none;
+    border: 0;
+    cursor: pointer;
 }
 
-.sidePanel-subtitle a:hover {
+.linkButton:hover {
     color: #bfdbfe;
+    text-decoration: underline;
 }
 
 .sidePanel button:focus-visible,

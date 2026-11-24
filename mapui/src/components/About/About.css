@@ -1,0 +1,84 @@
+.aboutDialog {
+    width: calc(100% - 32px);
+    max-width: 560px;
+    max-height: calc(100% - 32px);
+    padding: 0;
+    color: #e4e4e7;
+    color-scheme: dark;
+    font-size: 15px;
+    line-height: 1.6;
+    background: rgba(24, 24, 27, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+.aboutDialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+}
+
+.aboutDialog-content {
+    padding: 20px 24px 22px;
+}
+
+.aboutDialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.aboutDialog h2 {
+    margin: 2px 0 0;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.aboutDialog h3 {
+    margin: 20px 0 6px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.aboutDialog p {
+    margin: 0 0 10px;
+}
+
+.aboutDialog ul {
+    margin: 0 0 10px;
+    padding-left: 20px;
+}
+
+.aboutDialog-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.aboutDialog-links a {
+    padding: 6px 12px;
+    color: #f4f4f5;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+}
+
+.aboutDialog-links a:hover {
+    color: #fff;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.aboutDialog a:focus-visible,
+.aboutDialog button:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+}
