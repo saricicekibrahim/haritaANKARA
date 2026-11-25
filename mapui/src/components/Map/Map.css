@@ -182,6 +182,12 @@
     background: rgba(59, 130, 246, 0.18);
 }
 
+/* The layer that is drawn above the others. */
+.layerItem.onTop {
+    background: rgba(59, 130, 246, 0.32);
+    box-shadow: inset 3px 0 0 #60a5fa;
+}
+
 .layerRow {
     display: flex;
     align-items: center;

@@ -32,7 +32,8 @@ class Map extends React.Component {
             mapLoaded: false,
             panelOpen: window.innerWidth >= NARROW_SCREEN,
             aboutOpen: false,
-            visible: {},
+            // Ids of the layers that are on, from the bottom one to the top one.
+            openLayers: [],
             opacity: {}
         };
     }
@@ -84,10 +85,21 @@ class Map extends React.Component {
     handleLayer = (layer, event) => {
         const checked = event.target.checked;
         map.setLayoutProperty(layer.id, "visibility", checked ? "visible" : "none");
-        this.setState(state => ({ visible: { ...state.visible, [layer.id]: checked } }));
         if (checked) {
+            this.bringToFront(layer);
             this.zoomToLayer(layer, { stayIfInView: true });
+        } else {
+            this.setState(state => ({ openLayers: state.openLayers.filter(id => id !== layer.id) }));
         }
+    }
+
+    isOnTop = (layer) => this.state.openLayers[this.state.openLayers.length - 1] === layer.id;
+
+    // Layers cover each other, so the one the user touched last goes on top.
+    bringToFront = (layer) => {
+        if (this.isOnTop(layer)) return;
+        map.moveLayer(layer.id);
+        this.setState(state => ({ openLayers: [...state.openLayers.filter(id => id !== layer.id), layer.id] }));
     }
 
     handleZoomClick = (layer) => {
@@ -95,11 +107,14 @@ class Map extends React.Component {
         if (this.panelCoversMap()) {
             this.setPanelOpen(false);
         }
+        this.bringToFront(layer);
         this.zoomToLayer(layer);
     }
 
     handleLayerOpacityChange = (layer, event) => {
         const value = parseInt(event.target.value, 10);
+        // Otherwise the slider of a covered layer would seem to do nothing.
+        this.bringToFront(layer);
         map.setPaintProperty(layer.id, 'raster-opacity', value / 100);
         this.setState(state => ({ opacity: { ...state.opacity, [layer.id]: value } }));
     }
@@ -176,7 +191,7 @@ class Map extends React.Component {
     }
 
     render() {
-        const { mapLoaded, panelOpen, aboutOpen, visible, opacity } = this.state;
+        const { mapLoaded, panelOpen, aboutOpen, openLayers, opacity } = this.state;
 
         return (
             <div className="mapApp" ref={el => this.appContainer = el}>
@@ -196,7 +211,7 @@ class Map extends React.Component {
                         <Accordion allowZeroExpanded>
                             {layersAccordion.map((item) => {
                                 const groupLayers = layers.filter(layer => layer.type === item.type);
-                                const openCount = groupLayers.filter(layer => visible[layer.id]).length;
+                                const openCount = groupLayers.filter(layer => openLayers.includes(layer.id)).length;
                                 return (
                                     <AccordionItem key={item.type}>
                                         <AccordionItemHeading>
@@ -208,10 +223,12 @@ class Map extends React.Component {
                                         <AccordionItemPanel>
                                             <ul className="layerList">
                                                 {groupLayers.map(layer => {
-                                                    const isOpen = !!visible[layer.id];
+                                                    const isOpen = openLayers.includes(layer.id);
+                                                    // With a single layer on there is nothing to tell apart.
+                                                    const isOnTop = openLayers.length > 1 && this.isOnTop(layer);
                                                     const value = opacity[layer.id] === undefined ? 100 : opacity[layer.id];
                                                     return (
-                                                        <li key={layer.id} className={isOpen ? 'layerItem active' : 'layerItem'}>
+                                                        <li key={layer.id} className={`layerItem${isOpen ? ' active' : ''}${isOnTop ? ' onTop' : ''}`} aria-current={isOnTop || undefined}>
                                                             <div className="layerRow">
                                                                 <label className="layerToggle">
                                                                     <input
