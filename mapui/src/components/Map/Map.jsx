@@ -32,7 +32,8 @@ class Map extends React.Component {
             mapLoaded: false,
             panelOpen: window.innerWidth >= NARROW_SCREEN,
             aboutOpen: false,
-            visible: {},
+            // Ids of the layers that are on, from the bottom one to the top one.
+            openLayers: [],
             opacity: {}
         };
     }
@@ -84,27 +85,68 @@ class Map extends React.Component {
     handleLayer = (layer, event) => {
         const checked = event.target.checked;
         map.setLayoutProperty(layer.id, "visibility", checked ? "visible" : "none");
-        this.setState(state => ({ visible: { ...state.visible, [layer.id]: checked } }));
         if (checked) {
-            this.zoomToLayer(layer);
+            this.bringToFront(layer);
+            this.zoomToLayer(layer, { stayIfInView: true });
+        } else {
+            this.setState(state => ({ openLayers: state.openLayers.filter(id => id !== layer.id) }));
         }
+    }
+
+    isOnTop = (layer) => this.state.openLayers[this.state.openLayers.length - 1] === layer.id;
+
+    // Layers cover each other, so the one the user touched last goes on top.
+    bringToFront = (layer) => {
+        if (this.isOnTop(layer)) return;
+        map.moveLayer(layer.id);
+        this.setState(state => ({ openLayers: [...state.openLayers.filter(id => id !== layer.id), layer.id] }));
+    }
+
+    handleZoomClick = (layer) => {
+        // On a phone the panel would hide the very thing the user asked to see.
+        if (this.panelCoversMap()) {
+            this.setPanelOpen(false);
+        }
+        this.bringToFront(layer);
+        this.zoomToLayer(layer);
     }
 
     handleLayerOpacityChange = (layer, event) => {
         const value = parseInt(event.target.value, 10);
+        // Otherwise the slider of a covered layer would seem to do nothing.
+        this.bringToFront(layer);
         map.setPaintProperty(layer.id, 'raster-opacity', value / 100);
         this.setState(state => ({ opacity: { ...state.opacity, [layer.id]: value } }));
     }
 
-    // Fly to the extent of a layer, unless the user is already looking at it. The extent
-    // comes from the tileset's TileJSON, which mapbox-gl has already loaded into the source.
-    zoomToLayer = (layer) => {
+    // Right edge of the open side panel, in pixels.
+    panelRight = () => {
+        const panel = document.getElementById("mapSidePanel");
+        return panel && this.state.panelOpen ? panel.getBoundingClientRect().right : 0;
+    }
+
+    panelCoversMap = () => this.panelRight() >= map.getContainer().clientWidth / 2;
+
+    // mapbox-gl v1 only fits two opposite corners of the bounds, so on a rotated map the other two
+    // can end up off the screen. Fit both diagonals and take the one that is further out.
+    cameraForExtent = ([west, south, east, north], options) => {
+        const cameras = [
+            [[west, south], [east, north]],
+            [[west, north], [east, south]]
+        ].map(corners => map.cameraForBounds(corners, options));
+        return cameras.every(Boolean) ? cameras.reduce((a, b) => a.zoom < b.zoom ? a : b) : undefined;
+    }
+
+    // Fly to the extent of a layer; with stayIfInView, only if the user is not already looking
+    // at it. The extent comes from the tileset's TileJSON, which mapbox-gl has already loaded
+    // into the source.
+    zoomToLayer = (layer, { stayIfInView = false } = {}) => {
         const source = map.getSource(layer.source);
         if (!source || !source.bounds) {
             const onSourceData = (e) => {
                 if (e.sourceId === layer.source && e.isSourceLoaded) {
                     map.off('sourcedata', onSourceData);
-                    this.zoomToLayer(layer);
+                    this.zoomToLayer(layer, { stayIfInView });
                 }
             };
             map.on('sourcedata', onSourceData);
@@ -115,7 +157,7 @@ class Map extends React.Component {
         // so stay put. A layer is hidden below its minzoom, so zoom in just enough, in place.
         const [west, south, east, north] = source.bounds;
         const { lng, lat } = map.getCenter();
-        if (lng >= west && lng <= east && lat >= south && lat <= north) {
+        if (stayIfInView && lng >= west && lng <= east && lat >= south && lat <= north) {
             if (map.getZoom() < layer.minzoom) {
                 map.easeTo({ zoom: layer.minzoom + 0.1 });
             }
@@ -123,13 +165,11 @@ class Map extends React.Component {
         }
 
         // Keep the layer clear of the side panel, unless the panel covers most of the screen (mobile).
-        const panel = document.getElementById("mapSidePanel");
-        const panelRight = panel && this.state.panelOpen ? panel.getBoundingClientRect().right : 0;
-        const left = panelRight < map.getContainer().clientWidth / 2 ? panelRight : 0;
+        const left = this.panelCoversMap() ? 0 : this.panelRight();
         const bearing = map.getBearing();
         const camera =
-            map.cameraForBounds(source.bounds, { bearing, padding: { top: 40, bottom: 60, right: 40, left: left + 40 } }) ||
-            map.cameraForBounds(source.bounds, { bearing });
+            this.cameraForExtent(source.bounds, { bearing, padding: { top: 40, bottom: 60, right: 40, left: left + 40 } }) ||
+            this.cameraForExtent(source.bounds, { bearing });
         if (!camera) return;
 
         map.flyTo({
@@ -151,7 +191,7 @@ class Map extends React.Component {
     }
 
     render() {
-        const { mapLoaded, panelOpen, aboutOpen, visible, opacity } = this.state;
+        const { mapLoaded, panelOpen, aboutOpen, openLayers, opacity } = this.state;
 
         return (
             <div className="mapApp" ref={el => this.appContainer = el}>
@@ -171,7 +211,7 @@ class Map extends React.Component {
                         <Accordion allowZeroExpanded>
                             {layersAccordion.map((item) => {
                                 const groupLayers = layers.filter(layer => layer.type === item.type);
-                                const openCount = groupLayers.filter(layer => visible[layer.id]).length;
+                                const openCount = groupLayers.filter(layer => openLayers.includes(layer.id)).length;
                                 return (
                                     <AccordionItem key={item.type}>
                                         <AccordionItemHeading>
@@ -183,18 +223,36 @@ class Map extends React.Component {
                                         <AccordionItemPanel>
                                             <ul className="layerList">
                                                 {groupLayers.map(layer => {
-                                                    const isOpen = !!visible[layer.id];
+                                                    const isOpen = openLayers.includes(layer.id);
+                                                    // With a single layer on there is nothing to tell apart.
+                                                    const isOnTop = openLayers.length > 1 && this.isOnTop(layer);
                                                     const value = opacity[layer.id] === undefined ? 100 : opacity[layer.id];
                                                     return (
-                                                        <li key={layer.id} className={isOpen ? 'layerItem active' : 'layerItem'}>
-                                                            <label className="layerToggle">
-                                                                <input
-                                                                    type="checkbox"
-                                                                    checked={isOpen}
-                                                                    onChange={(e) => this.handleLayer(layer, e)}
-                                                                    disabled={!mapLoaded} />
-                                                                <span>{layer.displayName}</span>
-                                                            </label>
+                                                        <li key={layer.id} className={`layerItem${isOpen ? ' active' : ''}${isOnTop ? ' onTop' : ''}`} aria-current={isOnTop || undefined}>
+                                                            <div className="layerRow">
+                                                                <label className="layerToggle">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={isOpen}
+                                                                        onChange={(e) => this.handleLayer(layer, e)}
+                                                                        disabled={!mapLoaded} />
+                                                                    <span>{layer.displayName}</span>
+                                                                </label>
+                                                                {isOpen && (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="iconButton zoomButton"
+                                                                        onClick={() => this.handleZoomClick(layer)}
+                                                                        title="Katmana yakınlaştır"
+                                                                        aria-label={`${layer.displayName} katmanına yakınlaştır`}>
+                                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                                            <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
+                                                                            <circle cx="11.5" cy="11.5" r="3.5" />
+                                                                            <path d="m17 17-3-3" />
+                                                                        </svg>
+                                                                    </button>
+                                                                )}
+                                                            </div>
                                                             {isOpen && (
                                                                 <div className="opacityRow">
                                                                     <input

@@ -182,8 +182,20 @@
     background: rgba(59, 130, 246, 0.18);
 }
 
+/* The layer that is drawn above the others. */
+.layerItem.onTop {
+    background: rgba(59, 130, 246, 0.32);
+    box-shadow: inset 3px 0 0 #60a5fa;
+}
+
+.layerRow {
+    display: flex;
+    align-items: center;
+}
+
 .layerToggle {
     display: flex;
+    flex: 1;
     align-items: center;
     gap: 10px;
     margin: 0;
@@ -202,6 +214,15 @@
 .layerToggle input:disabled + span {
     cursor: wait;
     opacity: 0.5;
+}
+
+/* The negative margins keep the row as tall as one without a button, and line the icon up with
+   the opacity value below it. */
+.zoomButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: -6px -7px -6px 0;
 }
 
 .opacityRow {
